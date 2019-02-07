@@ -35,11 +35,13 @@ func main() {
 	c := colly.NewCollector()
 	// c := colly.NewCollector(colly.Debugger(&debug.LogDebugger{}))
 
-	// c.Limit(&colly.LimitRule{
-	// 	DomainGlob:  "*bahn.de*",
-	// 	Delay:       3 * time.Second,
-	// 	RandomDelay: 5 * time.Second,
-	// })
+	if os.Getenv("DELAY") == "true" {
+		c.Limit(&colly.LimitRule{
+			DomainGlob:  "*bahn.de*",
+			Delay:       3 * time.Second,
+			RandomDelay: 5 * time.Second,
+		})
+	}
 
 	c.OnHTML("div#sqResult h2 strong", func(e *colly.HTMLElement) {
 		log.Debug("from page: " + e.Text)
