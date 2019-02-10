@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type DzStop struct {
+type DzStationSchedule struct {
 	Station       string
 	Train         string
 	Direction     string

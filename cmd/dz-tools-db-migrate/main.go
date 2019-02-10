@@ -24,5 +24,5 @@ func main() {
 	}
 	defer db.Close()
 
-	db.AutoMigrate(&models.DzStop{})
+	db.AutoMigrate(&models.DzStationSchedule{})
 }

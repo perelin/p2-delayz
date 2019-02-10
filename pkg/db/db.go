@@ -32,10 +32,10 @@ func initDB() *gorm.DB {
 	return db
 }
 
-func SaveStopToDB(dzStop models.DzStop) {
+func SaveStopToDB(DzStationSchedule models.DzStationSchedule) {
 	db := initDB()
 	defer db.Close()
-	//success := db.NewRecord(dzStop)
-	db.Create(&dzStop)
+	//success := db.NewRecord(DzStationSchedule)
+	db.Create(&DzStationSchedule)
 	//log.Debug("db write success: ", success)
 }

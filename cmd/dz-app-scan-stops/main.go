@@ -66,7 +66,7 @@ func main() {
 		)
 		//log.Debug("dep time: ", departureTime)
 
-		stop := models.DzStop{
+		stop := models.DzStationSchedule{
 			Station:       "HD",
 			Train:         e.ChildText("td.train a"),
 			Direction:     e.ChildText("td.route span.bold a"),
@@ -106,32 +106,66 @@ func main() {
 		log.Println("Something went wrong:", err)
 	})
 
-	//c.Visit("https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?ld=41130&country=DEU&protocol=https:&rt=1&input=Heidelberg%20Hbf%238000156&boardType=dep&time=23:00%2B60&productsFilter=11111&&&date=07.01.19&&selectDate=&maxJourneys=&start=yes")
+	now := time.Now()
+	startTime := time.Date(
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		now.Hour(),
+		0,
+		0,
+		0,
+		time.UTC,
+	)
+	startURL := getStationScheduleURLforTime("Heidelberg Hbf", startTime)
+
+	c.Visit(startURL.String())
 
 	// "Im angegebenen Zeitraum verkehren an dieser Haltestelle keine Züge."
-	c.Visit("https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?ld=41130&protocol=https:&rt=1&input=Heidelberg%20Hbf%238000156&boardType=dep&time=01:00%2B60&productsFilter=11111&&&date=07.01.19&&selectDate=&maxJourneys=&start=yes")
+	//c.Visit("https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?ld=41130&protocol=https:&rt=1&input=Heidelberg%20Hbf%238000156&boardType=dep&time=01:00%2B60&productsFilter=11111&&&date=07.01.19&&selectDate=&maxJourneys=&start=yes")
 
 	// check "Aktuelle Informationen zu Ihrer Reise sind nur 4320 Minuten im Voraus möglich."
 	//https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?ld=41130&protocol=https:&rt=1&input=Heidelberg%20Hbf%238000156&boardType=dep&time=01:00%2B60&productsFilter=11111&&&date=08.04.19&&selectDate=&maxJourneys=&start=yes
 }
 
+func getStationScheduleURLforTime(station string, time time.Time) *url.URL {
+
+	urlTemplateRaw := "https://reiseauskunft.bahn.de/bin/bhftafel.exe/dn?ld=41130&protocol=https:&rt=1&input=Heidelberg%20Hbf%238000156&boardType=dep&time=01:00%2B60&productsFilter=11111&&&date=07.01.19&&selectDate=&maxJourneys=&start=yes"
+
+	stationURL, _ := url.Parse(urlTemplateRaw)
+
+	urlValues := stationURL.Query()
+
+	urlValues["input"][0] = station
+	urlValues["date"][0] = time.Format("02.01.06")
+	urlValues["time"][0] = time.Format("15:04")
+
+	stationURL.RawQuery = urlValues.Encode()
+
+	return stationURL
+}
+
 func getTimeFromBahnURL(bahnURL *url.URL) time.Time {
 
+	// get the basic components
 	rawURLValues := bahnURL.Query()
 	rawDate := rawURLValues["date"][0]
 	rawTime := rawURLValues["time"][0]
 
+	// sometimes there is an offset like +60, we remove it and deal with it later
 	if strings.Contains(rawURLValues["time"][0], "+") {
 		timeParts := strings.Split(rawURLValues["time"][0], "+")
 		rawTime = timeParts[0]
 	}
 
+	// basic parsing
 	datetime := rawDate + " - MEZ - " + rawTime
 	parsedTime, err := time.Parse("02.01.06 - MST - 15:04", datetime)
 	if err != nil {
 		panic(datetime + " not parsable")
 	}
 
+	// deal with the offset if necessary
 	if strings.Contains(rawURLValues["time"][0], "+") {
 		//log.Debug("time sewtoff detected: " + rawURLValues["time"][0])
 		timeParts := strings.Split(rawURLValues["time"][0], "+")
@@ -151,7 +185,7 @@ func forwardTimeInBahnURL(duration time.Duration, bahnURL *url.URL) *url.URL {
 	newTime := parsedTime.Add(duration)
 
 	rawURLValues["date"][0] = newTime.Format("02.01.06")
-	rawURLValues["time"][0] = newTime.Format("15:04") // adding the +60 setoff from the "später" button
+	rawURLValues["time"][0] = newTime.Format("15:04")
 
 	newURL := bahnURL
 
