@@ -165,7 +165,7 @@
 			"revisionTime": "2016-03-01T15:48:02Z"
 		},
 		{
-			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"checksumSHA1": "KzsJ/GkPEyvxG8eBcKrHRFoPhzU=",
 			"path": "github.com/lib/pq/oid",
 			"revision": "e182dc4027e2ded4b19396d638610f2653295f36",
 			"revisionTime": "2016-03-01T15:48:02Z"
@@ -213,7 +213,7 @@
 			"revisionTime": "2018-09-25T13:55:50Z"
 		},
 		{
-			"checksumSHA1": "uTQtOqR0ePMMcvuvAIksiIZxhqU=",
+			"checksumSHA1": "Xhsm+TevJogC8U4sG6FO+czBMps=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "d75a52659825e75fff6158388dddc6a5b04f9ba5",
 			"revisionTime": "2016-12-14T18:38:57Z"
@@ -363,5 +363,5 @@
 			"revisionTime": "2019-02-01T18:56:05Z"
 		}
 	],
-	"rootPath": "p2lab/delayz"
+	"rootPath": "p2lab/p2-delayz"
 }

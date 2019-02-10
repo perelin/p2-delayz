@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	models "p2lab/delayz/pkg/models"
+	models "p2lab/p2-delayz/pkg/models"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"

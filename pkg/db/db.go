@@ -2,7 +2,7 @@ package db
 
 import (
 	"os"
-	"p2lab/delayz/pkg/models"
+	"p2lab/p2-delayz/pkg/models"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"

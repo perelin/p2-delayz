@@ -3,8 +3,8 @@ package main
 import (
 	"net/url"
 	"os"
-	"p2lab/delayz/pkg/db"
-	"p2lab/delayz/pkg/models"
+	"p2lab/p2-delayz/pkg/db"
+	"p2lab/p2-delayz/pkg/models"
 	"strconv"
 	"strings"
 	"time"
@@ -44,9 +44,9 @@ func main() {
 	}
 
 	c.OnHTML("div#sqResult h2 strong", func(e *colly.HTMLElement) {
-		log.Debug("from page: " + e.Text)
+		//log.Debug("from page: " + e.Text)
 		queryDateTime := getTimeFromBahnURL(e.Request.URL)
-		log.Println("extracted from url: " + queryDateTime.String())
+		log.Println("datetime from url: " + queryDateTime.String())
 	})
 
 	c.OnHTML("table.result tr[id]", func(e *colly.HTMLElement) {
@@ -64,6 +64,7 @@ func main() {
 			departureTimeSplitMinute,
 			0, 0, loc,
 		)
+		//log.Debug("dep time: ", departureTime)
 
 		stop := models.DzStop{
 			Station:       "HD",
@@ -117,9 +118,7 @@ func main() {
 func getTimeFromBahnURL(bahnURL *url.URL) time.Time {
 
 	rawURLValues := bahnURL.Query()
-
 	rawDate := rawURLValues["date"][0]
-
 	rawTime := rawURLValues["time"][0]
 
 	if strings.Contains(rawURLValues["time"][0], "+") {
@@ -134,6 +133,7 @@ func getTimeFromBahnURL(bahnURL *url.URL) time.Time {
 	}
 
 	if strings.Contains(rawURLValues["time"][0], "+") {
+		//log.Debug("time sewtoff detected: " + rawURLValues["time"][0])
 		timeParts := strings.Split(rawURLValues["time"][0], "+")
 		addOnDuration, _ := strconv.Atoi(timeParts[1])
 		parsedTime = parsedTime.Add(time.Minute * time.Duration(addOnDuration))
